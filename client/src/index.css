@@ -17,3 +17,7 @@
 .menuRow p {
   @apply flex-1
 }
+
+canvas {
+  @apply border !relative border-slate-500 border-4 shadow-xl rounded-xl w-full m-1; 
+}

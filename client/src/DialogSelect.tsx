@@ -2,7 +2,7 @@ import { act, useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './index.css'
-import { set } from 'mongoose';
+import Renderer from './Renderer';
 
 function DialogSelect() {
   const chars :string[] = ["Cloud", "Tifa", "Aerith"];
@@ -79,7 +79,8 @@ function DialogSelect() {
 
   return (
     <>
-    <div className='flex flex-row w-full '>
+    <Renderer/>
+    <div id="dialogSelect" className='flex flex-row w-full '>
       <div id="characterSelect" className='blue-container'>
         <button className='menuCol'>{chars[0]}</button>
         <button className='menuCol'>{chars[1]}</button>
