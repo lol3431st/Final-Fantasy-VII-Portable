@@ -4,6 +4,8 @@ import viteLogo from '/vite.svg'
 import './index.css'
 import Renderer from './Renderer';
 
+
+
 function DialogSelect() {
   const chars :string[] = ["Cloud", "Tifa", "Aerith"];
   
@@ -15,6 +17,31 @@ function DialogSelect() {
   let aerithMateria :string[] = ["Heal", "Revive", "Barrier"];
   
   let [actionQueue, setQueue] = useState<string[]>([]);
+
+  function attack(spell: string) {
+    alert(`${actionQueue[0]} used ${spell}`);
+    setQueue(oldQueue => oldQueue.slice(1));
+
+    actionQueue[0] == char1.name ? setChar1(oldChar => ({...oldChar, ATB: 0})):
+    actionQueue[0] == char2.name ? setChar2(oldChar => ({...oldChar, ATB: 0})) :
+    actionQueue[0] == char3.name ? setChar3(oldChar => ({...oldChar, ATB: 0})) : null;
+
+
+
+  }
+  
+  let populateAttacks = () => {
+    const attackSelect = document.getElementById("attackSelect");
+    if (attackSelect == null) return;
+    attackSelect.className = "blue-container";
+    
+    actionQueue[0] == char1.name ? cloudSpells.map((spell, index) => { attackSelect.innerHTML += `<button class='menuCol' onClick=attack(${spell})>${spell}</button>` }):
+    actionQueue[0] == char2.name ? tifaSpells.map((spell, index) => { attackSelect.innerHTML += `<button class='menuCol' onClick=attack(${spell})>${spell}</button>` }) :
+    actionQueue[0] == char3.name ? aerithSpells.map((spell, index) => { attackSelect.innerHTML += `<button class='menuCol' onClick=attack(${spell})>${spell}</button>` }) : null;    
+  }
+
+
+  
 
   interface Character {
     name: string;
@@ -30,6 +57,9 @@ function DialogSelect() {
   let [char1, setChar1] = useState<Character>({name: "Cloud", spells: cloudSpells, ATB: 0, speed: 100, hp: 2934, mp: 100, materia: cloudMateria});
   let [char2, setChar2] = useState<Character>({name: "Tifa", spells: tifaSpells, ATB: 0, speed: 50, hp: 5123, mp: 100, materia: tifaMateria});
   let [char3, setChar3] = useState<Character>({name: "Aerith", spells: aerithSpells, ATB: 0, speed: 150, hp: 2102, mp: 100, materia: aerithMateria});
+
+  let [canAttack, setAttack] = useState<boolean>(false);
+
   useEffect(() => {
     setTimeout(() => {
       if (char1.ATB < 100) {
@@ -37,6 +67,7 @@ function DialogSelect() {
         console.log(char1.ATB);
       } else {
         setChar1(oldChar => ({...oldChar, ATB: 100}));
+        setAttack(true);
         if (actionQueue.includes(char1.name) == false) {
           setQueue(oldQueue => [...oldQueue, char1.name]);
         }
@@ -51,9 +82,11 @@ function DialogSelect() {
     setTimeout(() => {
       if (char2.ATB < 100) {
         setChar2(oldChar => ({...oldChar, ATB: oldChar.ATB + 1}));
+        
         console.log(char2.ATB);
       } else {
         setChar2(oldChar => ({...oldChar, ATB: 100}));
+        setAttack(true);
         if (actionQueue.includes(char2.name) == false) {
           setQueue(oldQueue => [...oldQueue, char2.name]);
         }
@@ -68,12 +101,20 @@ function DialogSelect() {
         console.log(char3.ATB);
       } else {
         setChar3(oldChar => ({...oldChar, ATB: 100}));
+        setAttack(true);
         if (actionQueue.includes(char3.name) == false) {
           setQueue(oldQueue => [...oldQueue, char3.name]);
         }
       }
     }, char3.speed);
   }, [char3.ATB]);
+
+  useEffect(() => {
+    // check if anyone in chars is in actionQueue
+    if (actionQueue.length > 0) {
+      for (let i = 0; i < chars.length; i++) {
+        if (actionQueue[0] == chars[i]) {
+  })
 
   
 
@@ -86,11 +127,15 @@ function DialogSelect() {
         <button className='menuCol'>{chars[1]}</button>
         <button className='menuCol'>{chars[2]}</button>
       </div>
-      <div id="buttonSelect" className='blue-container'>
-        <button className='menuCol'>Attack</button>
+
+      {canAttack ? <div id="buttonSelect" className='blue-container'>
+        <button className='menuCol' onClick={populateAttacks}>Attack</button>
         <button className='menuCol'>Spells</button>
         <button className='menuCol'>Items</button>
-      </div>
+      </div> : null}
+      <div id="attackSelect"></div>
+      <div id="spellSelect"></div>
+      <div id="itemSelect"></div>
       <div id="stats" className='blue-container'>
         <div className='menuCol flex-col'>
           <div className='menuRow'><p>HP: {char1.hp}</p><p>MP: {char1.mp}</p><p>ATB: {char1.ATB}</p></div>
