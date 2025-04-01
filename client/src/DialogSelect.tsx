@@ -3,6 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './index.css'
 import Renderer from './Renderer';
+import { set } from 'mongoose';
 
 
 
@@ -20,12 +21,15 @@ function DialogSelect() {
 
   function attack(spell: string) {
     alert(`${actionQueue[0]} used ${spell}`);
-    setQueue(oldQueue => oldQueue.slice(1));
-
+    console.log("spell")
+    
     actionQueue[0] == char1.name ? setChar1(oldChar => ({...oldChar, ATB: 0})):
     actionQueue[0] == char2.name ? setChar2(oldChar => ({...oldChar, ATB: 0})) :
     actionQueue[0] == char3.name ? setChar3(oldChar => ({...oldChar, ATB: 0})) : null;
+    
+    setQueue(oldQueue => oldQueue.slice(1));
 
+    
 
 
   }
@@ -34,10 +38,11 @@ function DialogSelect() {
     const attackSelect = document.getElementById("attackSelect");
     if (attackSelect == null) return;
     attackSelect.className = "blue-container";
+    attackSelect.innerHTML = "";
+    actionQueue[0] == char1.name ? cloudSpells.map((spell, index) => { attackSelect.innerHTML += `<button class="menuCol" onclick={attack(${spell})}>${spell}</button>` }) :
+    actionQueue[0] == char2.name ? tifaSpells.map((spell, index) => { attackSelect.innerHTML += `<button class="menuCol" onclick={attack(${spell})}>${spell}</button>` }) :
+    actionQueue[0] == char3.name ? aerithSpells.map((spell, index) => { attackSelect.innerHTML += `<button class="menuCol" onclick={attack(${spell})}>${spell}</button>` }) : null;
     
-    actionQueue[0] == char1.name ? cloudSpells.map((spell, index) => { attackSelect.innerHTML += `<button class='menuCol' onClick=attack(${spell})>${spell}</button>` }):
-    actionQueue[0] == char2.name ? tifaSpells.map((spell, index) => { attackSelect.innerHTML += `<button class='menuCol' onClick=attack(${spell})>${spell}</button>` }) :
-    actionQueue[0] == char3.name ? aerithSpells.map((spell, index) => { attackSelect.innerHTML += `<button class='menuCol' onClick=attack(${spell})>${spell}</button>` }) : null;    
   }
 
 
@@ -111,9 +116,17 @@ function DialogSelect() {
 
   useEffect(() => {
     // check if anyone in chars is in actionQueue
+    setAttack(false);
     if (actionQueue.length > 0) {
       for (let i = 0; i < chars.length; i++) {
-        if (actionQueue[0] == chars[i]) {
+        for(let j = 0; j < actionQueue.length; j++) {
+          if (actionQueue[j] == chars[i]) {
+            setAttack(true);
+            break;
+          }
+        }
+      }
+    }
   })
 
   
